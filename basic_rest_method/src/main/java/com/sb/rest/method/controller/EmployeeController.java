@@ -2,9 +2,12 @@ package com.sb.rest.method.controller;
 
 import com.sb.rest.method.dto.EmployeeDTO;
 import com.sb.rest.method.service.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/employee")
@@ -22,9 +25,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public EmployeeDTO getEmployee(@PathVariable Long id){
-
-        return service.getEmployeeInfo(id);
+    public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable Long id){
+        Optional<EmployeeDTO > employeeDTO = service.getEmployeeInfo(id);
+//        return new ResponseEntity<>().ok().body(employeeDTO);
+        return employeeDTO
+                .map(emp->ResponseEntity.ok(emp))
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
@@ -41,6 +47,11 @@ public class EmployeeController {
     @DeleteMapping(path = "/{employeeId}")
     public boolean deleteEmployee(@PathVariable Long employeeId){
         return service.deleteEmployeeById(employeeId);
+    }
+
+    @PatchMapping(path="/{employeeId}")
+    public EmployeeDTO updatePartialEmployeeData(@RequestBody Map<String,Object> mapKeyValue,@PathVariable Long employeeId){
+        return service.updatePartialEmployeeData(mapKeyValue,employeeId);
     }
 
 
