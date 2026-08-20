@@ -9,6 +9,7 @@ import org.springframework.ui.ModelMap;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,5 +41,27 @@ public class EmployeeService {
                 modelMapper.map(employeeInfo, EmployeeDTO.class)
         ).toList();
         return emplist;
+    }
+
+    public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO, Long employeeId) {
+
+        Optional<Employee> optionalEmployee = employeeRepo.findById(employeeId);
+        Employee employee = null;
+        if(optionalEmployee.isPresent()){
+            employee = optionalEmployee.get();
+           modelMapper.map(employeeDTO,employee);
+        }else{
+            employee = modelMapper.map(employeeDTO, Employee.class);
+        }
+        Employee saveEmployeeData = employeeRepo.save(employee);
+        EmployeeDTO empDto = modelMapper.map(saveEmployeeData, EmployeeDTO.class);
+        return empDto;
+    }
+
+    public boolean deleteEmployeeById(Long employeeId) {
+        boolean empExist = employeeRepo.existsById(employeeId);
+        if(!empExist)return false;
+        employeeRepo.deleteById(employeeId);
+        return true;
     }
 }

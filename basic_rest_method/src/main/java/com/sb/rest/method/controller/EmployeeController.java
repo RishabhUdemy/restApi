@@ -1,7 +1,6 @@
 package com.sb.rest.method.controller;
 
 import com.sb.rest.method.dto.EmployeeDTO;
-import com.sb.rest.method.entity.Employee;
 import com.sb.rest.method.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +31,16 @@ public class EmployeeController {
     @GetMapping
     public List<EmployeeDTO> employeeDTOS(){
         return service.getAllEmployeeInfo();
+    }
+
+    @PutMapping(path = "/{employeeId}")
+    public EmployeeDTO updateEmployee(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId){
+       return service.updateEmployee(employeeDTO,employeeId);
+    }
+
+    @DeleteMapping(path = "/{employeeId}")
+    public boolean deleteEmployee(@PathVariable Long employeeId){
+        return service.deleteEmployeeById(employeeId);
     }
 
 
