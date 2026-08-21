@@ -21,6 +21,10 @@ public class Employee implements Serializable {
     private Long empId;
     private String name;
     private String address;
+    private String email;
+    private Integer age;
+    private String role;
+    private Double salary;
     private String designation;
     private LocalDate dateOfJoining;
     private Boolean isActive;

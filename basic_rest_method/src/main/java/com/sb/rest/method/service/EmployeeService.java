@@ -64,7 +64,7 @@ public class EmployeeService {
         return empDto;
     }
 
-    public boolean deleteEmployeeById(Long employeeId) {
+    public Boolean deleteEmployeeById(Long employeeId) {
         boolean empExist = employeeExistById(employeeId);;
         if(!empExist)return false;
         employeeRepo.deleteById(employeeId);
