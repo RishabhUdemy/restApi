@@ -2,6 +2,7 @@ package com.sb.rest.method.service;
 
 import com.sb.rest.method.dto.EmployeeDTO;
 import com.sb.rest.method.entity.Employee;
+import com.sb.rest.method.exception.EmployeeNotFoundException;
 import com.sb.rest.method.repo.EmployeeRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -65,15 +66,13 @@ public class EmployeeService {
     }
 
     public Boolean deleteEmployeeById(Long employeeId) {
-        boolean empExist = employeeExistById(employeeId);;
-        if(!empExist)return false;
+        employeeExistById(employeeId);;
         employeeRepo.deleteById(employeeId);
         return true;
     }
 
     public EmployeeDTO updatePartialEmployeeData(Map<String, Object> mapKeyValue, Long employeeId) {
-        boolean empExist = employeeExistById(employeeId);
-        if(!empExist) return null;
+        employeeExistById(employeeId);
         Employee employeeEntity = employeeRepo.findById(employeeId).get();
         mapKeyValue.forEach((field,value)->{
             Field fieldUpdate = ReflectionUtils.findField(Employee.class,field);
@@ -82,7 +81,6 @@ public class EmployeeService {
                 throw new IllegalArgumentException("Invalid Field"+field);
             }
             ReflectionUtils.makeAccessible(fieldUpdate);
-
             Object convertValue = convertValue(fieldUpdate,value);
             ReflectionUtils.setField(fieldUpdate,employeeEntity,convertValue);
 //            fieldUpdate.setAccessible(true);
@@ -93,6 +91,7 @@ public class EmployeeService {
 
     private boolean employeeExistById(Long employeeId){
         boolean empExist = employeeRepo.existsById(employeeId);
+        if(!empExist)throw new EmployeeNotFoundException("Employee Not Found id:"+employeeId);
         return empExist;
     }
 
