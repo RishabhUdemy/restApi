@@ -1,14 +1,17 @@
 package com.sb.rest.method.controller;
 
 import com.sb.rest.method.dto.EmployeeDTO;
+import com.sb.rest.method.exception.EmployeeNotFoundException;
 import com.sb.rest.method.service.EmployeeService;
 import jakarta.validation.Valid;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -31,11 +34,15 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable Long id){
         Optional<EmployeeDTO > employeeDTO = service.getEmployeeInfo(id);
-//        return new ResponseEntity<>().ok().body(employeeDTO);
         return employeeDTO
                 .map(emp->ResponseEntity.ok(emp))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(()-> new EmployeeNotFoundException("Not Found Employeess"));
     }
+
+//    @ExceptionHandler(NoSuchElementException.class)
+//    public ResponseEntity<String> handleEmployeeNotFoundException(NoSuchElementException exception){
+//        return new ResponseEntity<>("Employee Not Found Exception",HttpStatus.NOT_FOUND);
+//    }
 
 
     @GetMapping
